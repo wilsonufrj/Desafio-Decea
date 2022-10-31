@@ -1,74 +1,142 @@
-import React, { useState, useContext } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
-import { classNames } from 'primereact/utils';
-
-import { AuthContext } from '../../context/AuthContext';
+import { Dialog } from 'primereact/dialog';
+import { useNavigate } from "react-router-dom";
+import { connect } from 'react-redux'
+import { login,addNewUser } from '../../actions/actionLogin.js'
 
 import './login.css'
 
-const LoginPage = () => {
+const LoginPage = (props) => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        username: "",
+        password: ""
+    });
+    const [newUserData, setNewUserData] = useState({
+        name: "",
+        username: "",
+        password: ""
+    });
+    const [displayResponsive, setDisplayResponsive] = useState(false);
+    const [position, setPosition] = useState('center');
 
-    const { authenticated, login } = useContext(AuthContext);
+    useEffect(() => {
+        if (props.loginState.authenticated === true) {
+            navigate("/home")
+        }
 
-    const [formData, setFormData] = useState({});
+    }, [props])
 
-    const defaultValues = {
-        name: '',
-        password: '',
+    const onHide = (name) => {
+        setDisplayResponsive(false);
     }
 
-    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const onClick = (name, position) => {
+        setDisplayResponsive(true);
 
-    const onSubmit = (data) => {
+        if (position) {
+            setPosition(position);
+        }
+    }
 
-        setFormData(data);
-        console.log(data)
-        login(data.name, data.password)
-        reset();
-    };
+    const onSubmit = (e) => {
+        e.preventDefault();
+        props.login(formData);
+    }
 
+    const addNewUser = (e) => {
+        props.addNewUser(newUserData);
+        setDisplayResponsive(false);
+    }
 
-    const getFormErrorMessage = (name) => {
-        return errors[name] && <small className="p-error">{errors[name].message}</small>
-    };
 
     return (
         <div >
+            <Dialog visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '27vw' }}>
+                <div>
+                    <div className="form-demo">
+                        <div className="flex justify-content-center">
+                            <div className="card">
+                                <h1 className="text-center">New User</h1>
+                                <form onSubmit={() => addNewUser()} className="p-fluid">
+                                    <div className="field">
+                                        <span className="p-float-label">
+                                            <InputText
+                                                autoFocus
+                                                value={newUserData.name}
+                                                onChange={(e) => setNewUserData({ ...newUserData, name: e.target.value })} />
+                                            <label htmlFor="name" >Name</label>
+                                        </span>
+                                    </div>
+
+
+                                    <div className="field">
+                                        <span className="p-float-label">
+                                            <InputText
+                                                value={newUserData.username}
+                                                onChange={(e) => setNewUserData({ ...newUserData, username: e.target.value })} />
+                                            <label htmlFor="name" >Username</label>
+                                        </span>
+                                    </div>
+
+                                    <div className="field mt-3">
+                                        <span className="p-float-label">
+                                            <Password
+                                                feedback={false}
+                                                toggleMask
+                                                value={newUserData.password}
+                                                onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })} />
+                                            <label htmlFor="password">Password</label>
+                                        </span>
+                                    </div>
+
+
+
+
+
+                                    <Button type="submit" label="Salvar" className="mt-2" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Dialog>
+
             <div className="form-demo">
                 <div className="flex justify-content-center">
                     <div className="card">
                         <h1 className="text-center">Login</h1>
-                        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                        <form onSubmit={onSubmit} className="p-fluid">
                             <div className="field">
                                 <span className="p-float-label">
-                                    <Controller name="name" control={control} rules={{ required: 'Name is required.' }} render={({ field, fieldState }) => (
-                                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
-                                    )} />
-                                    <label htmlFor="name" className={classNames({ 'p-error': errors.name })}>Name</label>
+                                    <InputText
+                                        autoFocus
+                                        value={formData.username}
+                                        onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
+                                    <label htmlFor="name" >Username</label>
                                 </span>
-                                {getFormErrorMessage('name')}
                             </div>
 
                             <div className="field mt-3">
                                 <span className="p-float-label">
-                                    <Controller name="password" control={control} rules={{ required: 'Password is required.' }} render={({ field, fieldState }) => (
-                                        <Password id={field.name} {...field} feedback={false} toggleMask className={classNames({ 'p-invalid': fieldState.invalid })} />
-                                    )} />
-                                    <label htmlFor="password" className={classNames({ 'p-error': errors.password })}>Password</label>
+                                    <Password
+                                        feedback={false}
+                                        toggleMask
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                                    <label htmlFor="password">Password</label>
                                 </span>
-                                {getFormErrorMessage('password')}
                             </div>
 
+                            <a href='#' onClick={() => onClick()}>
+                                <h5>
+                                    Novo Usuario
+                                </h5>
+                            </a>
 
-                            {/* <div className="field-checkbox">
-                            <Controller name="accept" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-                                <Checkbox inputId={field.name} onChange={(e) => field.onChange(e.checked)} checked={field.value} className={classNames({ 'p-invalid': fieldState.invalid })} />
-                            )} />
-                            <label htmlFor="accept" className={classNames({ 'p-error': errors.accept })}>I agree to the terms and conditions*</label>
-                        </div> */}
 
                             <Button type="submit" label="Login" className="mt-2" />
                         </form>
@@ -81,4 +149,15 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+const mapStateProps = (state) => {
+    return {
+        loginState: state.loginReducer
+    }
+}
+
+const mapDispacthToProps = {
+    login,
+    addNewUser
+}
+
+export default connect(mapStateProps, mapDispacthToProps)(LoginPage)

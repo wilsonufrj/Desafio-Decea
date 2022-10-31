@@ -4,17 +4,15 @@ import { Dialog } from 'primereact/dialog';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputMask } from 'primereact/inputmask';
-import React, { useContext, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form';
 
-import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import { useEffect } from 'react';
 
 export default function Home() {
   const [mainData, setMainData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { logout } = useContext(AuthContext);
   const [displayResponsive, setDisplayResponsive] = useState(false);
   const [position, setPosition] = useState('center');
   const [coast, setCoast] = useState('');
@@ -109,7 +107,7 @@ export default function Home() {
       label: 'Quit',
       icon: 'pi pi-fw pi-power-off',
       command: () => {
-        logout()
+        //Fazer logout
       }
     }
   ];
@@ -120,9 +118,9 @@ export default function Home() {
   const footer = (id) => {
     return (
       <span>
-        <Button onClick={() => markDone(id)} className='p-button-success' label="Done" icon="pi pi-check" style={{ marginRight: '.25em' }} />
-        <Button onClick={() => getInfo(id)} className='p-button-info' icon="pi pi-pencil" style={{ marginRight: '.25em' }} />
-        <Button onClick={() => deleteProject(id)} className='p-button-danger' icon="pi pi-trash" style={{ marginRight: '.25em' }} />
+        <Button onClick={() => console.log("Marcar projeto como feito")} className='p-button-success' label="Done" icon="pi pi-check" style={{ marginRight: '.25em' }} />
+        <Button onClick={() => console.log("Pegar informacao")} className='p-button-info' icon="pi pi-pencil" style={{ marginRight: '.25em' }} />
+        <Button onClick={() => console.log("Deletar um projeto")} className='p-button-danger' icon="pi pi-trash" style={{ marginRight: '.25em' }} />
       </span>
     )
   }
@@ -134,25 +132,6 @@ export default function Home() {
       })
   }
 
-  const getInfo = (id) => {
-    api.get(`projects/${id}`, {
-      headers: {
-        Authorization: 'Bearer '.concat('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYWluZG9jZSIsImV4cCI6MTY2NjI0OTI5N30.2f1DMZryiP9u597dcO3acOBeYOfA-eFf1wfIEU6PQOlH4Dw9yCmB-HqARdxPCo6THEvlRXTFjlcdnXCSMY3LzA')
-      }
-    })
-      .then(response => {
-        console.log(response.data)
-      })
-  }
-
-  const deleteProject = (id) => {
-    api.delete(`projects/${id}`, {
-      headers: {
-        Authorization: 'Bearer '.concat('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYWluZG9jZSIsImV4cCI6MTY2NjI0OTI5N30.2f1DMZryiP9u597dcO3acOBeYOfA-eFf1wfIEU6PQOlH4Dw9yCmB-HqARdxPCo6THEvlRXTFjlcdnXCSMY3LzA')
-      }
-    })
-      .then("Deletei")
-  }
 
   return (
     <div>
