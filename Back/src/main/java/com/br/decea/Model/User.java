@@ -1,12 +1,13 @@
 package com.br.decea.Model;
 
 import com.br.decea.DTO.ProjectDTO;
-import com.br.decea.DTO.ClientDTORequest;
-import com.br.decea.DTO.ClientDTOResponse;
+import com.br.decea.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,11 +30,12 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Client {
+@Table(name="tb_user")
+public class User implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
     
     private String name;
     

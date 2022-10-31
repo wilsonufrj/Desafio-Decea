@@ -4,17 +4,18 @@
  */
 package com.br.decea.Controller;
 
-import com.br.decea.DTO.ClientDTORequest;
+import com.br.decea.DTO.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.br.decea.Service.IClientService;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.br.decea.Service.IUserService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  *
@@ -22,13 +23,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @RestController
 @RequestMapping(path = "/users")
-public class ClientController {
+@CrossOrigin
+public class UserController {
         
     @Autowired
-    private IClientService userService;
+    private IUserService userService;
     
     @PostMapping
-    public ResponseEntity create(@RequestBody ClientDTORequest clientDTO){
+    public ResponseEntity create(@RequestBody UserDTO clientDTO){
         return ResponseEntity.ok(userService.create(clientDTO));
     }
     
@@ -36,17 +38,6 @@ public class ClientController {
     public ResponseEntity listUser(){
         return ResponseEntity.ok(userService.listUser());
     }
-    
-    //Receber o usuario pelo header
-    @GetMapping
-    public ResponseEntity login(@RequestBody ClientDTORequest clientDTO){
-        try{
-            return ResponseEntity.ok(userService.login(clientDTO));
-        }
-        catch(Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
-    }
-    
+        
     
 }

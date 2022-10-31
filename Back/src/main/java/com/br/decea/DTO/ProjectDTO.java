@@ -1,6 +1,6 @@
 package com.br.decea.DTO;
 
-import com.br.decea.Model.Client;
+import com.br.decea.Model.User;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

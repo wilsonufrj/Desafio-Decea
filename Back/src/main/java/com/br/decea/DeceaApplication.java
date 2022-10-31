@@ -1,5 +1,6 @@
 package com.br.decea;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -7,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class DeceaApplication {
 
     public static void main(String[] args) {
@@ -18,5 +19,10 @@ public class DeceaApplication {
     public PasswordEncoder getPasswordEncoder() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder;
+    }
+    
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
     }
 }

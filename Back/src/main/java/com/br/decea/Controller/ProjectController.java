@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,13 +29,13 @@ public class ProjectController {
     private IProjectService projectService;
 
     @PostMapping
-    public ResponseEntity create(@RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity create(@RequestBody ProjectDTO projectDTO) throws Exception {
         return ResponseEntity.ok(projectService.create(projectDTO));
     }
 
     @GetMapping
-    public ResponseEntity projects() {
-        return ResponseEntity.ok(projectService.getAll());
+    public ResponseEntity projects(@RequestHeader(value="username") String username ) throws Exception {
+        return ResponseEntity.ok(projectService.getAll(username));
     }
 
     @GetMapping(value = "/{id}")
@@ -48,18 +49,18 @@ public class ProjectController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity updateProject(@PathVariable Long id, @RequestBody ProjectUpdateDTO projectRequestDTO) {
+    public ResponseEntity updateProject(@PathVariable Long id, @RequestBody ProjectUpdateDTO projectRequestDTO,@RequestHeader(value="username") String username) {
         try {
-            return ResponseEntity.ok(projectService.update(id, projectRequestDTO));
+            return ResponseEntity.ok(projectService.update(id, projectRequestDTO,username));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PatchMapping(value = "/{id}/done")
-    public ResponseEntity finishedProject(@PathVariable Long id) {
+    public ResponseEntity finishedProject(@PathVariable Long id, @RequestHeader(value="username") String username) {
         try {
-            projectService.doneProject(id);
+            projectService.doneProject(id,username);
             return ResponseEntity.status(HttpStatus.OK).body("Project finished");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -67,8 +68,8 @@ public class ProjectController {
     }
 
     @DeleteMapping(value = "/{id}") //OK
-    public ResponseEntity deleteProject(@PathVariable Long id) {
-        projectService.delete(id);
+    public ResponseEntity deleteProject(@PathVariable Long id,@RequestHeader(value="username") String username) throws Exception {
+        projectService.delete(id,username);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

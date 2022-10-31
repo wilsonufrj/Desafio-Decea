@@ -27,6 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name="tb_project")
 public class Project {
 
     @Id
@@ -40,7 +41,7 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_client",referencedColumnName = "id")
     @JsonBackReference
-    private Client client;
+    private User user;
 
     private Date deadline;
     private Date created_at;

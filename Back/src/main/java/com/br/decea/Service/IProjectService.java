@@ -11,10 +11,10 @@ import java.util.List;
  * @author wilson
  */
 public interface IProjectService {
-    public Project create(ProjectDTO projectDTO);
-    public List<Project> getAll();
+    public Project create(ProjectDTO projectDTO) throws Exception;
+    public List<Project> getAll(String username) throws Exception;
     public ProjectResponseDTO get(Long id) throws Exception;
-    public void delete(Long id);
-    public void doneProject(Long id) throws Exception;
-    public Project update(Long id, ProjectUpdateDTO projectDTO) throws Exception;
+    public void delete(Long id,String username)throws Exception;
+    public void doneProject(Long id,String username) throws Exception;
+    public Project update(Long id, ProjectUpdateDTO projectDTO, String username) throws Exception;
 }
