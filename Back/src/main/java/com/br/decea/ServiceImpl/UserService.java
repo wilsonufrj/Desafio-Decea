@@ -31,15 +31,11 @@ public class UserService implements IUserService {
     private ModelMapper modelMapper;
 
     @Override
-    public Boolean login(UserDTO clientDTO) throws Exception {
+    public Boolean login(UserDTO userDTO) throws Exception {
+        User user = userRepository.findByUsername(userDTO.getUsername())
+                .orElseThrow(() -> new Exception("User not found"));
 
-        Optional<User> optClient = userRepository.findByUsername(clientDTO.getUsername());
-        if (optClient.isEmpty()) {
-            throw new Exception("Client not found");
-        }
-
-        User auxCLient = optClient.get();
-        return validatePassword(clientDTO.getPassword(), auxCLient.getPassword());
+        return validatePassword(userDTO.getPassword(), user.getPassword());
     }
 
     @Override
@@ -66,6 +62,6 @@ public class UserService implements IUserService {
 
     @Override
     public User getUser(String username) throws Exception {
-        return userRepository.findByUsername(username).orElseThrow(()->new Exception("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new Exception("User not found"));
     }
 }

@@ -45,11 +45,10 @@ public class User implements Serializable{
     private String password;
     
     @OneToMany(
-            mappedBy = "client",
+            mappedBy = "user",
             targetEntity = Project.class,
             cascade = CascadeType.ALL
     )
-    @JsonManagedReference
     private List<Project> projects;
     
 }

@@ -27,7 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name="tb_project")
+@Table(name = "tb_project")
 public class Project {
 
     @Id
@@ -39,13 +39,11 @@ public class Project {
     private Boolean done;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_client",referencedColumnName = "id")
-    @JsonBackReference
+    @JoinColumn(name = "id_user", referencedColumnName = "id", nullable = false)
     private User user;
 
     private Date deadline;
     private Date created_at;
     private Date updated_at;
 
-    
 }

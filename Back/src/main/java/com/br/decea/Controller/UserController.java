@@ -30,13 +30,22 @@ public class UserController {
     private IUserService userService;
     
     @PostMapping
-    public ResponseEntity create(@RequestBody UserDTO clientDTO){
-        return ResponseEntity.ok(userService.create(clientDTO));
+    public ResponseEntity create(@RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.create(userDTO));
     }
     
     @GetMapping(value="/list")
     public ResponseEntity listUser(){
         return ResponseEntity.ok(userService.listUser());
+    }
+    
+    @PostMapping(value="/login")
+    public ResponseEntity login(@RequestBody UserDTO userDTO) throws Exception{
+        try{
+            return ResponseEntity.ok(userService.login(userDTO));
+        }catch(Exception e){
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
         
     
