@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
     private String title;
     private Long zip_code;
     private double cost;
@@ -40,6 +41,7 @@ public class Project {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private User user;
 
     private Date deadline;

@@ -22,6 +22,5 @@ public class ProjectDTO {
     private Date deadline;
     private Date created_at;
     private Date updated_at;
-
   
 }

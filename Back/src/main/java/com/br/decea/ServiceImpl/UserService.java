@@ -31,11 +31,16 @@ public class UserService implements IUserService {
     private ModelMapper modelMapper;
 
     @Override
-    public Boolean login(UserDTO userDTO) throws Exception {
+    public UserDTO login(UserDTO userDTO) throws Exception {
         User user = userRepository.findByUsername(userDTO.getUsername())
                 .orElseThrow(() -> new Exception("User not found"));
-
-        return validatePassword(userDTO.getPassword(), user.getPassword());
+        
+        if(!validatePassword(userDTO.getPassword(), user.getPassword())){
+            throw new Exception("Password incorrect");
+        }
+        
+        
+        return this.modelMapper.map(user,UserDTO.class) ;
     }
 
     @Override

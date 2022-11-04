@@ -1,7 +1,8 @@
 package com.br.decea.ServiceImpl;
 
 import com.br.decea.DTO.ProjectDTO;
-import com.br.decea.DTO.ProjectResponseDTO;
+import com.br.decea.DTO.ProjectInfoDTO;
+import com.br.decea.DTO.ProjectNameIdDTO;
 import com.br.decea.DTO.ProjectUpdateDTO;
 import com.br.decea.External.Comunication;
 import com.br.decea.External.Location;
@@ -15,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.br.decea.Repository.UserRepository;
 import com.br.decea.Service.IUserService;
+import org.modelmapper.ModelMapper;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -28,12 +33,15 @@ public class ProjectService implements IProjectService {
 
     @Autowired
     private IUserService userService;
+    
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
-    public Project create(ProjectDTO projectDTO) throws Exception {
+    public ProjectDTO create(ProjectDTO projectDTO,String username) throws Exception {
 
         try {
-            User user = userService.getUser(projectDTO.getUsername());
+            User user = userService.getUser(username);
 
             Project auxProject = new Project();
             auxProject.setUser(user);
@@ -46,24 +54,27 @@ public class ProjectService implements IProjectService {
             auxProject.setCreated_at(projectDTO.getCreated_at());
             auxProject.setUpdated_at(projectDTO.getUpdated_at());
 
-            return projectRepository.save(auxProject);
+            return modelMapper.map(projectRepository.save(auxProject),ProjectDTO.class);
         } catch (Exception e) {
             throw new Exception("User not found");
         }
     }
 
     @Override
-    public List<Project> getAll(String username) throws Exception {
+    public List<ProjectNameIdDTO> getAll(String username) throws Exception {
         try {
             User user = userService.getUser(username);
-            return user.getProjects();
+            return user.getProjects()
+                    .stream()
+                    .map(project->this.modelMapper.map(project,ProjectNameIdDTO.class))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new Exception("User not found");
         }
     }
 
     @Override
-    public ProjectResponseDTO get(Long id) throws Exception {
+    public ProjectInfoDTO get(Long id) throws Exception {
 
         Project auxProject = projectRepository.findById(id)
                 .orElseThrow(() -> new Exception("Project not found"));
@@ -71,19 +82,19 @@ public class ProjectService implements IProjectService {
         Comunication comunication = new Comunication(auxProject.getZip_code());
         Location location = comunication.getData();
 
-        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-        projectResponseDTO.setCity(location.getCity());
-        projectResponseDTO.setState(location.getState());
-        projectResponseDTO.setId(auxProject.getId());
-        projectResponseDTO.setTitle(auxProject.getTitle());
-        projectResponseDTO.setCost(auxProject.getCost());
-        projectResponseDTO.setDone(auxProject.getDone());
-        projectResponseDTO.setUsername(auxProject.getUser().getUsername());
-        projectResponseDTO.setDeadline(auxProject.getDeadline());
-        projectResponseDTO.setCreated_at(auxProject.getCreated_at());
-        projectResponseDTO.setUpdated_at(auxProject.getUpdated_at());
+        ProjectInfoDTO projectInfoDTO = new ProjectInfoDTO();
+        projectInfoDTO.setCity(location.getCity());
+        projectInfoDTO.setState(location.getState());
+        projectInfoDTO.setId(auxProject.getId());
+        projectInfoDTO.setTitle(auxProject.getTitle());
+        projectInfoDTO.setCost(auxProject.getCost());
+        projectInfoDTO.setDone(auxProject.getDone());
+        projectInfoDTO.setUsername(auxProject.getUser().getUsername());
+        projectInfoDTO.setDeadline(auxProject.getDeadline());
+        projectInfoDTO.setCreated_at(auxProject.getCreated_at());
+        projectInfoDTO.setUpdated_at(auxProject.getUpdated_at());
 
-        return projectResponseDTO;
+        return projectInfoDTO;
     }
 
     @Override

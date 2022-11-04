@@ -6,6 +6,7 @@ import com.br.decea.Service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,14 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/projects")
+@CrossOrigin
 public class ProjectController {
 
     @Autowired
     private IProjectService projectService;
 
     @PostMapping
-    public ResponseEntity create(@RequestBody ProjectDTO projectDTO) throws Exception {
-        return ResponseEntity.ok(projectService.create(projectDTO));
+    public ResponseEntity create(@RequestBody ProjectDTO projectDTO,@RequestHeader(value="username") String username) throws Exception {
+        return ResponseEntity.ok(projectService.create(projectDTO,username));
     }
 
     @GetMapping

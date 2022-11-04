@@ -49,6 +49,7 @@ public class User implements Serializable{
             targetEntity = Project.class,
             cascade = CascadeType.ALL
     )
+    @JsonManagedReference
     private List<Project> projects;
     
 }
