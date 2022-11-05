@@ -3,6 +3,7 @@ package com.br.decea.Controller;
 import com.br.decea.DTO.ProjectDTO;
 import com.br.decea.DTO.ProjectUpdateDTO;
 import com.br.decea.Service.IProjectService;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity getProject(@PathVariable Long id) {
+    public ResponseEntity getProject(@PathVariable UUID id) {
         try {
             return ResponseEntity.ok(projectService.get(id));
         } catch (Exception e) {
@@ -51,7 +52,7 @@ public class ProjectController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity updateProject(@PathVariable Long id, @RequestBody ProjectUpdateDTO projectRequestDTO,@RequestHeader(value="username") String username) {
+    public ResponseEntity updateProject(@PathVariable UUID id, @RequestBody ProjectUpdateDTO projectRequestDTO,@RequestHeader(value="username") String username) {
         try {
             return ResponseEntity.ok(projectService.update(id, projectRequestDTO,username));
         } catch (Exception e) {
@@ -60,7 +61,7 @@ public class ProjectController {
     }
 
     @PatchMapping(value = "/{id}/done")
-    public ResponseEntity finishedProject(@PathVariable Long id, @RequestHeader(value="username") String username) {
+    public ResponseEntity finishedProject(@PathVariable UUID id, @RequestHeader(value="username") String username) {
         try {
             projectService.doneProject(id,username);
             return ResponseEntity.status(HttpStatus.OK).body("Project finished");
@@ -69,8 +70,8 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping(value = "/{id}") //OK
-    public ResponseEntity deleteProject(@PathVariable Long id,@RequestHeader(value="username") String username) throws Exception {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity deleteProject(@PathVariable UUID id,@RequestHeader(value="username") String username) throws Exception {
         projectService.delete(id,username);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

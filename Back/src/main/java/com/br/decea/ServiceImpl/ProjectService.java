@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.br.decea.Repository.UserRepository;
 import com.br.decea.Service.IUserService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 import org.modelmapper.ModelMapper;
 
 import java.util.stream.Collectors;
@@ -33,12 +36,12 @@ public class ProjectService implements IProjectService {
 
     @Autowired
     private IUserService userService;
-    
+
     @Autowired
     private ModelMapper modelMapper;
 
     @Override
-    public ProjectDTO create(ProjectDTO projectDTO,String username) throws Exception {
+    public ProjectDTO create(ProjectDTO projectDTO, String username) throws Exception {
 
         try {
             User user = userService.getUser(username);
@@ -54,27 +57,24 @@ public class ProjectService implements IProjectService {
             auxProject.setCreated_at(projectDTO.getCreated_at());
             auxProject.setUpdated_at(projectDTO.getUpdated_at());
 
-            return modelMapper.map(projectRepository.save(auxProject),ProjectDTO.class);
+            return modelMapper.map(projectRepository.save(auxProject), ProjectDTO.class);
         } catch (Exception e) {
             throw new Exception("User not found");
         }
     }
 
     @Override
-    public List<ProjectNameIdDTO> getAll(String username) throws Exception {
-        try {
-            User user = userService.getUser(username);
-            return user.getProjects()
-                    .stream()
-                    .map(project->this.modelMapper.map(project,ProjectNameIdDTO.class))
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new Exception("User not found");
+    public List<Project> getAll(String username) throws Exception {
+
+        User user = userService.getUser(username);
+        if (user.getProjects().isEmpty()) {
+            return new ArrayList<Project>();
         }
+        return user.getProjects();
     }
 
     @Override
-    public ProjectInfoDTO get(Long id) throws Exception {
+    public ProjectInfoDTO get(UUID id) throws Exception {
 
         Project auxProject = projectRepository.findById(id)
                 .orElseThrow(() -> new Exception("Project not found"));
@@ -83,13 +83,13 @@ public class ProjectService implements IProjectService {
         Location location = comunication.getData();
 
         ProjectInfoDTO projectInfoDTO = new ProjectInfoDTO();
+        projectInfoDTO.setZip_code(auxProject.getZip_code());
         projectInfoDTO.setCity(location.getCity());
         projectInfoDTO.setState(location.getState());
         projectInfoDTO.setId(auxProject.getId());
         projectInfoDTO.setTitle(auxProject.getTitle());
         projectInfoDTO.setCost(auxProject.getCost());
         projectInfoDTO.setDone(auxProject.getDone());
-        projectInfoDTO.setUsername(auxProject.getUser().getUsername());
         projectInfoDTO.setDeadline(auxProject.getDeadline());
         projectInfoDTO.setCreated_at(auxProject.getCreated_at());
         projectInfoDTO.setUpdated_at(auxProject.getUpdated_at());
@@ -98,39 +98,58 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Project update(Long id, ProjectUpdateDTO projectDTO, String username) throws Exception {
+    public ProjectUpdateDTO update(UUID id, ProjectUpdateDTO projectDTO, String username) throws Exception {
         Project auxProject = projectRepository.findById(id)
                 .orElseThrow(() -> new Exception("Project not found"));
 
         if (auxProject.getDone()) {
             throw new Exception("Project had done");
         }
-
-        if (auxProject.getUser().getUsername() != username) {
+        
+        if (!auxProject.getUser().getUsername().equals(username)) {
             throw new Exception("The user can't do any alteration");
         }
+        
+        Comunication comunication = new Comunication(projectDTO.getZip_code());
+        Location location = comunication.getData();
 
         auxProject.setTitle(projectDTO.getTitle());
+        auxProject.setCost(projectDTO.getCost());
         auxProject.setZip_code(projectDTO.getZip_code());
         auxProject.setDeadline(projectDTO.getDeadline());
-
-        return projectRepository.save(auxProject);
+        
+        Date currentTime = new Date();
+        
+        auxProject.setUpdated_at(currentTime);
+        
+        projectRepository.save(auxProject);
+        
+        return new ProjectUpdateDTO(
+                projectDTO.getTitle(),
+                projectDTO.getZip_code(),
+                projectDTO.getDeadline(),
+                projectDTO.getCost(),
+                location.getCity(),
+                location.getState(),
+                currentTime
+        );
+                
     }
 
     @Override
-    public void delete(Long id,String username) throws Exception {
+    public void delete(UUID id, String username) throws Exception {
         Project project = projectRepository.findById(id).orElseThrow(
-        ()-> new Exception("Project not found"));
-        
-        if (project.getUser().getUsername() != username) {
+                () -> new Exception("Project not found"));
+
+        if (!project.getUser().getUsername().equals(username)) {
             throw new Exception("The user can't do any alteration");
         }
-        
+
         projectRepository.deleteById(id);
     }
 
     @Override
-    public void doneProject(Long id, String username) throws Exception {
+    public void doneProject(UUID id, String username) throws Exception {
 
         Project project = projectRepository.findById(id).orElseThrow(
                 () -> new Exception("Project not found"));

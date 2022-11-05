@@ -32,7 +32,7 @@ import lombok.Setter;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String title;
     private Long zip_code;

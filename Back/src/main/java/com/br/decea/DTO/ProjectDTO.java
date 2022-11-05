@@ -2,6 +2,7 @@ package com.br.decea.DTO;
 
 import com.br.decea.Model.User;
 import java.util.Date;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class ProjectDTO {
     
-    private Long id;
+    private UUID id;
     private String title;
     private Long zip_code;
     private double cost;
