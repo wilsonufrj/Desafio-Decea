@@ -48,7 +48,6 @@ public class ProjectController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
     }
 
     @PutMapping(value = "/{id}")
@@ -61,10 +60,9 @@ public class ProjectController {
     }
 
     @PatchMapping(value = "/{id}/done")
-    public ResponseEntity finishedProject(@PathVariable UUID id, @RequestHeader(value="username") String username) {
+    public ResponseEntity finishedProject(@PathVariable UUID id,@RequestBody ProjectUpdateDTO projectRequestDTO,@RequestHeader(value="username") String username) {
         try {
-            projectService.doneProject(id,username);
-            return ResponseEntity.status(HttpStatus.OK).body("Project finished");
+            return ResponseEntity.ok(projectService.doneProject(id,projectRequestDTO,username));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

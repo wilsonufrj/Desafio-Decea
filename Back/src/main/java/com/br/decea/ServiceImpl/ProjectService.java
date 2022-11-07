@@ -127,6 +127,7 @@ public class ProjectService implements IProjectService {
         return new ProjectUpdateDTO(
                 projectDTO.getTitle(),
                 projectDTO.getZip_code(),
+                projectDTO.isDone(),
                 projectDTO.getDeadline(),
                 projectDTO.getCost(),
                 location.getCity(),
@@ -149,17 +150,17 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public void doneProject(UUID id, String username) throws Exception {
+    public boolean doneProject(UUID id,ProjectUpdateDTO projectDTO ,String username) throws Exception {
 
         Project project = projectRepository.findById(id).orElseThrow(
                 () -> new Exception("Project not found"));
 
-        if (project.getUser().getUsername() != username) {
+        if (!project.getUser().getUsername().equals(username)) {
             throw new Exception("The user can't do any alteration");
         }
 
-        project.setDone(Boolean.TRUE);
-        projectRepository.save(project);
+        project.setDone(projectDTO.isDone());
+        return projectRepository.save(project).getDone();
     }
 
 }

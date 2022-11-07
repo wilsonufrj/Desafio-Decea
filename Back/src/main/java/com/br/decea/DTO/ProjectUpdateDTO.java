@@ -16,6 +16,7 @@ public class ProjectUpdateDTO {
     
     private String title;
     private Long zip_code;
+    private boolean done;
     private Date deadline;
     private double cost;
     private String city;

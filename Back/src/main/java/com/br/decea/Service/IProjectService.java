@@ -17,6 +17,6 @@ public interface IProjectService {
     public List<Project> getAll(String username) throws Exception;
     public ProjectInfoDTO get(UUID id) throws Exception;
     public void delete(UUID id,String username)throws Exception;
-    public void doneProject(UUID id,String username) throws Exception;
+    public boolean doneProject(UUID id,ProjectUpdateDTO projectDTO,String username) throws Exception;
     public ProjectUpdateDTO update(UUID id, ProjectUpdateDTO projectDTO, String username) throws Exception;
 }
